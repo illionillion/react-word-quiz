@@ -25,20 +25,26 @@ function App() {
 
   const constraintsRef = useRef<HTMLDivElement>(null);
 
+  let ignore = false;
   useEffect(() => {
-    const word = wordData[Math.floor(Math.random() * wordData.length)];
-    setCurrentWord(word);
-    const options: wordProps[] = [];
-    options.push(word);
-    console.log(options.map((item) => item));
 
-    for (let i = 0; i < 3; i++) {
-      // const filterWord = wordData.filter(item => options.find(val => val.eng === item.eng))
-      const filterWord = wordData.filter((item) => word.eng !== item.eng);
-      options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
-    }
-    console.log(options);
-    setOptionWord(options);
+    const start = async () => {
+      if(ignore) return
+      const word = wordData[Math.floor(Math.random() * wordData.length)];
+      setCurrentWord(word);
+      const options: wordProps[] = [];
+      options.push(word);
+
+      for (let i = 0; i < 3; i++) {
+        const filterWord = wordData.filter((item) => !options.includes(item)); // inclidesで判定できた
+        // console.log(filterWord);
+        options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
+      }
+      console.log(options);
+      setOptionWord(options);
+    };
+    start()
+    return () => {ignore = true}
   }, []);
 
   return (
@@ -53,6 +59,9 @@ function App() {
       <Box className="wordContainer">
         <Box className="wordPanel">{currentWord?.eng}</Box>
         <Box className="wordDragArea">Drag Word</Box>
+      </Box>
+      <Box className="wordItems">
+        {optionWord?.map((item, key) => <motion.div key={key} dragConstraints={constraintsRef} drag style={{width:"auto"}}>{item.jap}<br/></motion.div>)}
       </Box>
     </motion.div>
   );
