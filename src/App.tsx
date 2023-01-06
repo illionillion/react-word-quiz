@@ -27,9 +27,8 @@ function App() {
 
   let ignore = false;
   useEffect(() => {
-
     const start = async () => {
-      if(ignore) return
+      if (ignore) return;
       const word = wordData[Math.floor(Math.random() * wordData.length)];
       setCurrentWord(word);
       const options: wordProps[] = [];
@@ -43,8 +42,10 @@ function App() {
       console.log(options);
       setOptionWord(options);
     };
-    start()
-    return () => {ignore = true}
+    start();
+    return () => {
+      ignore = true;
+    };
   }, []);
 
   return (
@@ -56,12 +57,45 @@ function App() {
         height: "100vh",
       }}
     >
-      <Box className="wordContainer">
+      <Box
+        className="wordContainer"
+        backgroundColor="aquamarine"
+        position="absolute"
+        top="15%"
+        left="50%"
+        transform="translate(-50%,-15%)"
+        width="2xl"
+        height="28"
+      >
         <Box className="wordPanel">{currentWord?.eng}</Box>
-        <Box className="wordDragArea">Drag Word</Box>
+        <Box
+          className="wordDragArea"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          margin="auto"
+          w="90%"
+          h="75%"
+          backgroundColor="darkgrey"
+          borderWidth="1px"
+          borderColor="black"
+          borderStyle="dashed"
+        >
+          Drag Word
+        </Box>
       </Box>
       <Box className="wordItems">
-        {optionWord?.map((item, key) => <motion.div key={key} dragConstraints={constraintsRef} drag style={{width:"auto"}}>{item.jap}<br/></motion.div>)}
+        {optionWord?.map((item, key) => (
+          <motion.div
+            key={key}
+            dragConstraints={constraintsRef}
+            drag
+            style={{ width: "fit-content", margin:0 }}
+          >
+            {item.jap}
+            <br />
+          </motion.div>
+        ))}
       </Box>
     </motion.div>
   );
