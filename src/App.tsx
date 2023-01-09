@@ -26,25 +26,26 @@ function App() {
 
   const dragAreaRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
-  // const selectWord = () => {};
+  const selectWord = () => {
+    const word = wordData[Math.floor(Math.random() * wordData.length)];
+    setCurrentWord(word);
+    const options: wordProps[] = [];
+    options.push(word);
+
+    for (let i = 0; i < 3; i++) {
+      const filterWord = wordData.filter((item) => !options.includes(item)); // inclidesで判定できた
+      // console.log(filterWord);
+      options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
+    }
+    console.log(options);
+    setOptionWord(options);
+  };
 
   let ignore = false;
   useEffect(() => {
     const start = async () => {
       if (ignore) return;
-      const word = wordData[Math.floor(Math.random() * wordData.length)];
-      setCurrentWord(word);
-      const options: wordProps[] = [];
-      options.push(word);
-
-      for (let i = 0; i < 3; i++) {
-        const filterWord = wordData.filter((item) => !options.includes(item)); // inclidesで判定できた
-        // console.log(filterWord);
-        options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
-      }
-      console.log(options);
-      setOptionWord(options);
-      // selectWord();
+      selectWord();
     };
     start();
     return () => {
@@ -108,7 +109,7 @@ function App() {
             questionItem={currentWord}
             constraintsRef={constraintsRef}
             dragAreaRef={dragAreaRef}
-            // selectWord={selectWord}
+            selectWord={() => selectWord()}
           />
         ))}
       </Box>

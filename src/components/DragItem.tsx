@@ -1,4 +1,4 @@
-import { FC, RefObject, useRef, useState } from "react";
+import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { wordProps } from "../App";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
@@ -8,7 +8,7 @@ interface DragItemProps {
   dragAreaRef: RefObject<HTMLDivElement>;
   item: wordProps;
   questionItem: wordProps | undefined;
-  //   selectWord: () => void;
+  selectWord: () => void;
 }
 
 type DragItemState = "correct" | "incorrect" | undefined;
@@ -18,10 +18,12 @@ const DragItem: FC<DragItemProps> = ({
   dragAreaRef,
   item,
   questionItem,
-  //   selectWord,
+  selectWord,
 }) => {
   const dragRef = useRef<HTMLDivElement>(null);
   const [isState, setIsState] = useState<DragItemState>();
+  const [isFloat, setIsFloat] = useState<boolean>(false);
+  const [timer,setTimer] = useState<NodeJS.Timer>()
 
   const checkAnswer = () => {
     if (!dragRef.current || !dragAreaRef.current || !questionItem) return;
@@ -55,10 +57,10 @@ const DragItem: FC<DragItemProps> = ({
     ) {
       console.log("エリア内");
       // 正誤判定
-      if (item.eng == questionItem.eng) {
+      if (item.eng === questionItem.eng) {
         console.log("正解");
         setIsState("correct");
-        // (() => selectWord())();
+        // selectWord()
       } else {
         console.log("不正解");
         setIsState("incorrect");
@@ -68,14 +70,38 @@ const DragItem: FC<DragItemProps> = ({
     }
   };
 
+  const onDrag = () => {
+    setIsFloat(false)
+    checkAnswer()
+  }
+
+  const onDragEnd = () => {
+    setIsFloat(true)
+    checkAnswer()
+  }
+  const onDragTransitionEnd = () => {
+    setIsFloat(false)
+    checkAnswer()
+  }
+
+  useEffect(()=>{
+    // if (isFloat) {
+    //   setTimer(setInterval(checkAnswer, 250))
+    // } else {
+    //   clearInterval(timer)
+    //   setTimer(undefined)
+    // }
+    console.log(isFloat);
+  },[isFloat])
+
   return (
     <motion.div
       ref={dragRef}
       dragConstraints={constraintsRef}
       drag
-      onDrag={checkAnswer}
-      onDragEnd={checkAnswer}
-      onDragTransitionEnd={checkAnswer}
+      onDrag={onDrag}
+      onDragEnd={onDragEnd}
+      onDragTransitionEnd={onDragTransitionEnd}
       style={{
         height: "5rem",
         margin: "2px",
@@ -89,17 +115,17 @@ const DragItem: FC<DragItemProps> = ({
       }}
     >
       {item.jap}
-      {(()=>{
+      {(() => {
         switch (isState) {
-            case "correct":
-                
-                return <CheckIcon color="#72f122" position="absolute" fontSize="3xl"/>
-                case "incorrect":
-                    
-                return <CloseIcon color="red" position="absolute" fontSize="3xl"/>;
-        
-            default:
-                return;
+          case "correct":
+            return (
+              <CheckIcon color="#72f122" position="absolute" fontSize="5xl" />
+            );
+          case "incorrect":
+            return <CloseIcon color="red" position="absolute" fontSize="4xl" />;
+
+          default:
+            return;
         }
       })()}
     </motion.div>
