@@ -1,10 +1,11 @@
 import { Box } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
+import DragItem from "./components/DragItem";
 import wordData from "./data.json";
 
-interface wordProps {
+export interface wordProps {
   eng: string;
   jap: string;
 }
@@ -23,7 +24,9 @@ function App() {
     wordProps[]
   >();
 
+  const dragAreaRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
+  // const selectWord = () => {};
 
   let ignore = false;
   useEffect(() => {
@@ -41,6 +44,7 @@ function App() {
       }
       console.log(options);
       setOptionWord(options);
+      // selectWord();
     };
     start();
     return () => {
@@ -65,10 +69,13 @@ function App() {
         left="50%"
         transform="translate(-50%,-15%)"
         width="2xl"
-        height="28"
+        height="2xs"
       >
-        <Box className="wordPanel">{currentWord?.eng}</Box>
+        <Box className="wordPanel" fontSize="2xl">
+          {currentWord?.eng}
+        </Box>
         <Box
+          ref={dragAreaRef}
           className="wordDragArea"
           display="flex"
           alignItems="center"
@@ -84,17 +91,25 @@ function App() {
           Drag Word
         </Box>
       </Box>
-      <Box className="wordItems">
+      <Box
+        className="wordItems"
+        position="absolute"
+        bottom="15%"
+        left="50%"
+        display="flex"
+        transform="translate(-50%,15%)"
+        w="2xl"
+        margin="auto"
+      >
         {optionWord?.map((item, key) => (
-          <motion.div
+          <DragItem
             key={key}
-            dragConstraints={constraintsRef}
-            drag
-            style={{ width: "fit-content", margin:0 }}
-          >
-            {item.jap}
-            <br />
-          </motion.div>
+            item={item}
+            questionItem={currentWord}
+            constraintsRef={constraintsRef}
+            dragAreaRef={dragAreaRef}
+            // selectWord={selectWord}
+          />
         ))}
       </Box>
     </motion.div>
