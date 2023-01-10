@@ -19,10 +19,7 @@ interface optionWordProps<T> {
 function App() {
   console.log(wordData);
   const [currentWord, setCurrentWord] = useState<wordProps>();
-  const [optionWord, setOptionWord] = useState<
-    // optionWordProps<wordProps> | undefined
-    wordProps[]
-  >();
+  const [optionWord, setOptionWord] = useState<wordProps[]>();
 
   const dragAreaRef = useRef<HTMLDivElement>(null);
   const constraintsRef = useRef<HTMLDivElement>(null);
@@ -52,6 +49,15 @@ function App() {
       ignore = true;
     };
   }, []);
+
+  const shuffle = ([...array]:wordProps[]) => {
+    if (!array.length) return [];
+    for (let i = array.length - 1; i >= 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  };
 
   return (
     <motion.div
@@ -102,7 +108,7 @@ function App() {
         w="2xl"
         margin="auto"
       >
-        {optionWord?.map((item, key) => (
+        {shuffle(optionWord ?? [])?.map((item, key) => (
           <DragItem
             key={key}
             item={item}
