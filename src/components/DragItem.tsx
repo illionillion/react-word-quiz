@@ -23,7 +23,7 @@ const DragItem: FC<DragItemProps> = ({
   const dragRef = useRef<HTMLDivElement>(null);
   const [isState, setIsState] = useState<DragItemState>();
   const [isFloat, setIsFloat] = useState<boolean>(false);
-  const [timer,setTimer] = useState<NodeJS.Timer>()
+  const [timer, setTimer] = useState<NodeJS.Timer>();
 
   const checkAnswer = () => {
     if (!dragRef.current || !dragAreaRef.current || !questionItem) return;
@@ -60,7 +60,7 @@ const DragItem: FC<DragItemProps> = ({
       if (item.eng === questionItem.eng) {
         console.log("正解");
         setIsState("correct");
-        // selectWord()
+        selectWord();
       } else {
         console.log("不正解");
         setIsState("incorrect");
@@ -71,20 +71,20 @@ const DragItem: FC<DragItemProps> = ({
   };
 
   const onDrag = () => {
-    setIsFloat(false)
-    checkAnswer()
-  }
+    setIsFloat(false);
+    checkAnswer();
+  };
 
   const onDragEnd = () => {
-    setIsFloat(true)
-    checkAnswer()
-  }
+    setIsFloat(true);
+    checkAnswer();
+  };
   const onDragTransitionEnd = () => {
-    setIsFloat(false)
-    checkAnswer()
-  }
+    setIsFloat(false);
+    checkAnswer();
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     // if (isFloat) {
     //   setTimer(setInterval(checkAnswer, 250))
     // } else {
@@ -92,7 +92,7 @@ const DragItem: FC<DragItemProps> = ({
     //   setTimer(undefined)
     // }
     console.log(isFloat);
-  },[isFloat])
+  }, [isFloat]);
 
   return (
     <motion.div
@@ -113,6 +113,10 @@ const DragItem: FC<DragItemProps> = ({
         flex: 1,
         borderRadius: "50px",
       }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1, y: [50, 0] }}
+      exit={{ opacity: 0, y: [50, 0] }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       {item.jap}
       {(() => {
