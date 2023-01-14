@@ -1,7 +1,7 @@
 import { FC, RefObject, useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { wordProps } from "../App";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { wordProps } from "./DragQuiz";
 
 interface DragItemProps {
   constraintsRef: RefObject<HTMLDivElement>;
