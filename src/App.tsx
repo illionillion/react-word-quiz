@@ -6,6 +6,7 @@ import DragItem from "./components/DragItem";
 import wordData from "./data.json";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import DragQuiz from "./components/DragQuiz";
+import NormalQuiz from "./components/NormalQuiz";
 
 interface optionWordProps<T> {
   0: T;
@@ -36,7 +37,7 @@ function App() {
           }
         />
         <Route path="/DragQuiz" element={<DragQuiz />} />
-        <Route path="/NormalQuiz" element={<></>} />
+        <Route path="/NormalQuiz" element={<NormalQuiz/>} />
       </Routes>
     </BrowserRouter>
   );
