@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { wordProps } from "./DragQuiz";
 import wordData from "../data.json";
-import { Box, List, ListItem } from "@chakra-ui/react";
+import { Box, Button, HStack, List, ListItem } from "@chakra-ui/react";
 
 const NormalQuiz = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
@@ -22,18 +22,18 @@ const NormalQuiz = () => {
     setOptionWord(options);
   };
 
-  let ignore = false;
-  useEffect(() => {
-    const start = async () => {
-      if (ignore) return;
-      selectWord();
-    };
-    start();
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  /**
+   * 出題
+   */
+  const on_set_a_questions = () => {
+    selectWord();
+  }
 
+  /**
+   * シャッフル
+   * @param param0 
+   * @returns 
+   */
   const shuffle = ([...array]: wordProps[]) => {
     if (!array.length) return [];
     for (let i = array.length - 1; i >= 0; i--) {
@@ -51,12 +51,17 @@ const NormalQuiz = () => {
       alignItems="center"
     >
       <Box>
-          <Box borderWidth="1px">{currentWord?.eng}</Box>
+          <Box borderWidth="1px" textAlign="center">{currentWord?.eng}</Box>
           <List>
             {shuffle(optionWord ?? []).map((item, index) => (
               <ListItem key={index}>{item.jap}</ListItem>
             ))}
           </List>
+          <HStack>
+            <Button flex={1} onClick={on_set_a_questions}>問題を出す</Button>
+            <Button flex={1}>解答する</Button>
+            <Button flex={1}>リセットする</Button>
+          </HStack>
       </Box>
     </Box>
   );
