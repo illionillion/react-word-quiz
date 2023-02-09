@@ -1,13 +1,38 @@
 import { useEffect, useRef, useState } from "react";
 import { wordProps } from "./DragQuiz";
 import wordData from "../data.json";
-import { Box, Button, HStack, List, ListItem } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  List,
+  ListItem,
+  useBoolean,
+} from "@chakra-ui/react";
 
 const NormalQuiz = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
+  const [selectWord, setSelectWord] = useState<wordProps>();
+  const [isSelected, setIsSelected] = useBoolean(false);
   const [optionWord, setOptionWord] = useState<wordProps[]>();
 
-  const selectWord = () => {
+  useEffect(() => {
+    console.log(selectWord);
+  }, [selectWord]);
+
+  /**
+   * 選択肢から選択
+   */
+  const onSelectWord = (eng: string) => {
+    setIsSelected.on();
+    console.log(eng);
+    setSelectWord(optionWord?.find((item) => item.eng === eng));
+  };
+
+  /**
+   * 出題
+   */
+  const on_set_a_questions = () => {
     const word = wordData[Math.floor(Math.random() * wordData.length)];
     setCurrentWord(word);
     const options: wordProps[] = [];
@@ -19,20 +44,24 @@ const NormalQuiz = () => {
       options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
     }
     console.log(options);
-    setOptionWord(options);
+    setOptionWord(shuffle(options));
+
+    setSelectWord(undefined)
+    setIsSelected.off()
   };
 
-  /**
-   * 出題
-   */
-  const on_set_a_questions = () => {
-    selectWord();
+  const on_answer = () => {
+    if(selectWord?.eng === currentWord?.eng) {
+      alert('正解！！')
+    } else {
+      alert('不正解…')
+    }
   }
 
   /**
    * シャッフル
-   * @param param0 
-   * @returns 
+   * @param param0
+   * @returns
    */
   const shuffle = ([...array]: wordProps[]) => {
     if (!array.length) return [];
@@ -51,17 +80,31 @@ const NormalQuiz = () => {
       alignItems="center"
     >
       <Box>
-          <Box borderWidth="1px" textAlign="center">{currentWord?.eng}</Box>
-          <List>
-            {shuffle(optionWord ?? []).map((item, index) => (
-              <ListItem key={index}>{item.jap}</ListItem>
-            ))}
-          </List>
-          <HStack>
-            <Button flex={1} onClick={on_set_a_questions}>問題を出す</Button>
-            <Button flex={1}>解答する</Button>
-            <Button flex={1}>リセットする</Button>
-          </HStack>
+        <Box borderWidth="1px" textAlign="center">
+          {currentWord?.eng}
+        </Box>
+        <List>
+          {optionWord?.map((item, index) => (
+            <ListItem
+              key={index}
+              onClick={() => onSelectWord(item.eng)}
+              {...(selectWord?.eng === item.eng
+                ? { borderBlock: "solid", borderColor: "#000", borderWidth: 1 }
+                : {})}
+            >
+              {item.jap}
+            </ListItem>
+          ))}
+        </List>
+        <HStack>
+          <Button flex={1} onClick={on_set_a_questions}>
+            問題を出す
+          </Button>
+          <Button flex={1} onClick={on_answer} disabled={!isSelected}>
+            解答する
+          </Button>
+          <Button flex={1}>リセットする</Button>
+        </HStack>
       </Box>
     </Box>
   );
