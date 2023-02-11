@@ -20,7 +20,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path="/"
+          path="/Map"
           element={
             <Box
               w="100vw"
@@ -38,6 +38,7 @@ function App() {
         />
         <Route path="/DragQuiz" element={<DragQuiz />} />
         <Route path="/NormalQuiz" element={<NormalQuiz/>} />
+        <Route path="/" element={<NormalQuiz/>} />
       </Routes>
     </BrowserRouter>
   );
