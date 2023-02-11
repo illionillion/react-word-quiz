@@ -8,13 +8,18 @@ import {
   List,
   ListItem,
   useBoolean,
+  useDisclosure,
 } from "@chakra-ui/react";
+import AnswerDialog from "./AnswerDialog";
 
 const NormalQuiz = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
   const [selectWord, setSelectWord] = useState<wordProps>();
   const [isSelected, setIsSelected] = useBoolean(false);
+  const [isCorrect, setIsCorrect] = useBoolean(false);
   const [optionWord, setOptionWord] = useState<wordProps[]>();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     console.log(selectWord);
@@ -46,16 +51,29 @@ const NormalQuiz = () => {
     console.log(options);
     setOptionWord(shuffle(options));
 
-    setSelectWord(undefined)
-    setIsSelected.off()
+    setSelectWord(undefined);
+    setIsSelected.off();
+    setIsCorrect.off();
+    onClose();
   };
 
+  /**
+   * 解答する
+   */
   const on_answer = () => {
-    if(selectWord?.eng === currentWord?.eng) {
-      alert('正解！！')
+    if (selectWord?.eng === currentWord?.eng) {
+      setIsCorrect.on();
     } else {
-      alert('不正解…')
+      setIsCorrect.off();
     }
+    onOpen();
+  };
+
+  /**
+   * リセットする
+   */
+  const onReset = () => {
+    window.location.reload()
   }
 
   /**
@@ -103,8 +121,16 @@ const NormalQuiz = () => {
           <Button flex={1} onClick={on_answer} disabled={!isSelected}>
             解答する
           </Button>
-          <Button flex={1}>リセットする</Button>
+          <Button flex={1} onClick={onReset}>リセットする</Button>
         </HStack>
+        <AnswerDialog
+          cancelRef={cancelRef}
+          currentWord={currentWord}
+          isCorrect={isCorrect}
+          isOpen={isOpen}
+          onClose={onClose}
+          on_set_a_questions={on_set_a_questions}
+        />
       </Box>
     </Box>
   );
