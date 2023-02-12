@@ -11,6 +11,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import AnswerDialog from "./AnswerDialog";
+import { BellIcon } from "@chakra-ui/icons";
 
 const NormalQuiz = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
@@ -22,8 +23,9 @@ const NormalQuiz = () => {
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    console.log(selectWord);
-  }, [selectWord]);
+    // console.log(selectWord);
+    wordSpeech('')
+  }, []);
 
   /**
    * 選択肢から選択
@@ -50,6 +52,7 @@ const NormalQuiz = () => {
     }
     console.log(options);
     setOptionWord(shuffle(options));
+    wordSpeech(word.eng)
 
     setSelectWord(undefined);
     setIsSelected.off();
@@ -73,8 +76,8 @@ const NormalQuiz = () => {
    * リセットする
    */
   const onReset = () => {
-    window.location.reload()
-  }
+    window.location.reload();
+  };
 
   /**
    * シャッフル
@@ -89,6 +92,44 @@ const NormalQuiz = () => {
     }
     return array;
   };
+
+  /**
+   * 音声よみあげ(英語)
+   * @param text テキスト
+   */
+  const wordSpeech = (text:string) => {
+    // if(!text || text === '') return
+    // 発言を作成
+    const uttr = new SpeechSynthesisUtterance();
+
+    // 文章 (コンストラクタの引数以外に、この方法でも指定できます)
+    uttr.text = text;
+
+    // 言語 (日本語:ja-JP, アメリカ英語:en-US, イギリス英語:en-GB, 中国語:zh-CN, 韓国語:ko-KR)
+    uttr.lang = "en-US";
+
+    // // 速度 0.1-10 初期値:1 (倍速なら2, 半分の倍速なら0.5)
+    // uttr.rate = 0.5;
+
+    // // 高さ 0-2 初期値:1
+    // uttr.pitch = 0.5;
+
+    // // 音量 0-1 初期値:1
+    // uttr.volume = 0.75;
+
+    // 英語に対応しているvoiceを設定
+    const voices = speechSynthesis.getVoices()
+
+    for (let i = 0; i < voices.length; i++) {
+      if (voices[i].lang === 'en-US') {
+        uttr.voice = voices[i]
+      }
+    }
+
+    // 再生 (発言キュー発言に追加)
+    speechSynthesis.speak(uttr);
+  };
+
   return (
     <Box
       w="100vw"
@@ -99,6 +140,7 @@ const NormalQuiz = () => {
     >
       <Box>
         <Box borderWidth="1px" textAlign="center">
+          <BellIcon onClick={()=>wordSpeech(currentWord?.eng ?? '')}/>
           {currentWord?.eng}
         </Box>
         <List>
@@ -121,7 +163,9 @@ const NormalQuiz = () => {
           <Button flex={1} onClick={on_answer} disabled={!isSelected}>
             解答する
           </Button>
-          <Button flex={1} onClick={onReset}>リセットする</Button>
+          <Button flex={1} onClick={onReset}>
+            リセットする
+          </Button>
         </HStack>
         <AnswerDialog
           cancelRef={cancelRef}
