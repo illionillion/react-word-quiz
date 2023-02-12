@@ -4,6 +4,8 @@ import wordData from "../data.json";
 import {
   Box,
   Button,
+  Center,
+  Flex,
   HStack,
   List,
   ListItem,
@@ -24,7 +26,7 @@ const NormalQuiz = () => {
 
   useEffect(() => {
     // console.log(selectWord);
-    wordSpeech('')
+    wordSpeech("");
   }, []);
 
   /**
@@ -52,7 +54,7 @@ const NormalQuiz = () => {
     }
     console.log(options);
     setOptionWord(shuffle(options));
-    wordSpeech(word.eng)
+    wordSpeech(word.eng);
 
     setSelectWord(undefined);
     setIsSelected.off();
@@ -97,7 +99,7 @@ const NormalQuiz = () => {
    * 音声よみあげ(英語)
    * @param text テキスト
    */
-  const wordSpeech = (text:string) => {
+  const wordSpeech = (text: string) => {
     // if(!text || text === '') return
     // 発言を作成
     const uttr = new SpeechSynthesisUtterance();
@@ -118,11 +120,11 @@ const NormalQuiz = () => {
     // uttr.volume = 0.75;
 
     // 英語に対応しているvoiceを設定
-    const voices = speechSynthesis.getVoices()
+    const voices = speechSynthesis.getVoices();
 
     for (let i = 0; i < voices.length; i++) {
-      if (voices[i].lang === 'en-US') {
-        uttr.voice = voices[i]
+      if (voices[i].lang === "en-US") {
+        uttr.voice = voices[i];
       }
     }
 
@@ -138,16 +140,31 @@ const NormalQuiz = () => {
       justifyContent="center"
       alignItems="center"
     >
-      <Box>
-        <Box borderWidth="1px" textAlign="center">
-          <BellIcon onClick={()=>wordSpeech(currentWord?.eng ?? '')}/>
-          {currentWord?.eng}
-        </Box>
-        <List>
+      <Flex direction="column" w="4xl" h="2xl">
+        <Center borderWidth="1px" flex={1} fontSize="3xl">
+          {currentWord ? (
+            <>
+              <BellIcon onClick={() => wordSpeech(currentWord?.eng ?? "")} />
+              {currentWord?.eng}
+            </>
+          ) : (
+            <></>
+          )}
+        </Center>
+        <List
+          flex={4}
+          display="flex"
+          flexDirection="column"
+          textAlign="center"
+          justifyContent="center"
+          gap={5}
+        >
           {optionWord?.map((item, index) => (
             <ListItem
               key={index}
               onClick={() => onSelectWord(item.eng)}
+              fontSize="3xl"
+              bg="blackAlpha.100"
               {...(selectWord?.eng === item.eng
                 ? { borderBlock: "solid", borderColor: "#000", borderWidth: 1 }
                 : {})}
@@ -156,7 +173,7 @@ const NormalQuiz = () => {
             </ListItem>
           ))}
         </List>
-        <HStack>
+        <HStack flex={1}>
           <Button flex={1} onClick={on_set_a_questions}>
             問題を出す
           </Button>
@@ -175,7 +192,7 @@ const NormalQuiz = () => {
           onClose={onClose}
           on_set_a_questions={on_set_a_questions}
         />
-      </Box>
+      </Flex>
     </Box>
   );
 };
