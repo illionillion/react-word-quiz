@@ -40,6 +40,8 @@ const AnswerDialog: FC<AnswerDialogProps> = ({
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
+      motionPreset='slideInBottom'
+      isCentered
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
