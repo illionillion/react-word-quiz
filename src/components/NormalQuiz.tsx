@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { wordProps } from "./DragQuiz";
 import wordData from "../data.json";
+import { motion } from "framer-motion";
 import {
   Box,
   Button,
@@ -160,17 +161,29 @@ const NormalQuiz = () => {
           gap={5}
         >
           {optionWord?.map((item, index) => (
-            <ListItem
+            <motion.li
               key={index}
               onClick={() => onSelectWord(item.eng)}
-              fontSize="3xl"
-              bg="blackAlpha.100"
-              {...(selectWord?.eng === item.eng
-                ? { borderBlock: "solid", borderColor: "#000", borderWidth: 1 }
-                : {})}
+              style={{
+                fontSize: "1.875rem",
+                background: "rgba(0,0,0,0.06)",
+                opacity: 0,
+                ...(selectWord?.eng === item.eng
+                  ? {
+                      // transition:'0.5s',
+                      borderBlock: "solid",
+                      borderColor: "#000",
+                      borderWidth: 1,
+                    }
+                  : {}),
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, y: [50, 0] }}
+              exit={{ opacity: 0, y: [50, 0] }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
             >
               {item.jap}
-            </ListItem>
+            </motion.li>
           ))}
         </List>
         <HStack flex={1}>
