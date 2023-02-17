@@ -25,6 +25,8 @@ interface AnswerDialogProps {
   isCorrect: boolean;
   currentWord: wordProps | undefined;
   on_set_a_questions: () => void;
+  isExistNext: boolean;
+  title?: string;
 }
 
 const AnswerDialog: FC<AnswerDialogProps> = ({
@@ -34,19 +36,21 @@ const AnswerDialog: FC<AnswerDialogProps> = ({
   isCorrect,
   currentWord,
   on_set_a_questions,
+  isExistNext,
+  title,
 }) => {
   return (
     <AlertDialog
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={onClose}
-      motionPreset='slideInBottom'
+      motionPreset="slideInBottom"
       isCentered
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            結果
+            {title ?? "結果"}
           </AlertDialogHeader>
 
           <AlertDialogBody>
@@ -73,7 +77,9 @@ const AnswerDialog: FC<AnswerDialogProps> = ({
             </Accordion>
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button onClick={on_set_a_questions}>次の問題を出す</Button>
+            <Button onClick={on_set_a_questions}>
+              {isExistNext ? "次の問題を出す" : "結果を見る"}{" "}
+            </Button>
             <Button onClick={onClose} ml={3}>
               閉じる
             </Button>

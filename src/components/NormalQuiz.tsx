@@ -9,7 +9,6 @@ import {
   Flex,
   HStack,
   List,
-  ListItem,
   useBoolean,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -22,20 +21,24 @@ const NormalQuiz = () => {
   const [isSelected, setIsSelected] = useBoolean(false);
   const [isCorrect, setIsCorrect] = useBoolean(false);
   const [optionWord, setOptionWord] = useState<wordProps[]>();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [pastWord, setPastWord] = useState<wordProps[]>()
+  const { isOpen: isAnswerOpen, onOpen: onAnswerOpen, onClose: onAnswerClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     // console.log(selectWord);
     wordSpeech("");
   }, []);
+  useEffect(() => {
+    console.log(pastWord);
+  }, [pastWord]);
 
   /**
    * 選択肢から選択
    */
   const onSelectWord = (eng: string) => {
     setIsSelected.on();
-    console.log(eng);
+    // console.log(eng);
     setSelectWord(optionWord?.find((item) => item.eng === eng));
   };
 
@@ -43,24 +46,37 @@ const NormalQuiz = () => {
    * 出題
    */
   const on_set_a_questions = () => {
-    const word = wordData[Math.floor(Math.random() * wordData.length)];
+
+    if (wordData.length === pastWord?.length) {
+      console.log('end');
+      
+      return
+    }
+
+    const get_rand_word = (data: wordProps[]) => data[Math.floor(Math.random() * data.length)];
+    console.log(pastWord ? wordData.filter(i => pastWord?.indexOf(i) === -1) : wordData);
+    
+    const word = get_rand_word(pastWord ? wordData.filter(i => pastWord?.indexOf(i) === -1) : wordData)
+    console.log(word);
+    
     setCurrentWord(word);
+
+    // 既出単語に追加
+    setPastWord(prev => prev ? [...prev, word] : [word])
     const options: wordProps[] = [];
     options.push(word);
 
     for (let i = 0; i < 3; i++) {
       const filterWord = wordData.filter((item) => !options.includes(item)); // inclidesで判定できた
-      // console.log(filterWord);
       options.push(filterWord[Math.floor(Math.random() * filterWord.length)]);
     }
-    console.log(options);
     setOptionWord(shuffle(options));
     wordSpeech(word.eng);
 
     setSelectWord(undefined);
     setIsSelected.off();
     setIsCorrect.off();
-    onClose();
+    onAnswerClose();
   };
 
   /**
@@ -72,7 +88,7 @@ const NormalQuiz = () => {
     } else {
       setIsCorrect.off();
     }
-    onOpen();
+    onAnswerOpen();
   };
 
   /**
@@ -189,7 +205,7 @@ const NormalQuiz = () => {
         </List>
         <HStack flex={1}>
           <Button flex={1} onClick={on_set_a_questions}>
-            問題を出す
+            {wordData.length !== pastWord?.length ? "問題を出す" : "結果を見る"}
           </Button>
           <Button flex={1} onClick={on_answer} disabled={!isSelected}>
             解答する
@@ -202,9 +218,11 @@ const NormalQuiz = () => {
           cancelRef={cancelRef}
           currentWord={currentWord}
           isCorrect={isCorrect}
-          isOpen={isOpen}
-          onClose={onClose}
+          isOpen={isAnswerOpen}
+          onClose={onAnswerClose}
           on_set_a_questions={on_set_a_questions}
+          title="答え"
+          isExistNext={wordData.length !== pastWord?.length}
         />
       </Flex>
     </Box>
