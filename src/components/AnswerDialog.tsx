@@ -16,7 +16,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FC, RefObject } from "react";
-import { wordProps } from "./DragQuiz";
+import { wordProps } from "../type";
 
 interface AnswerDialogProps {
   isOpen: boolean;

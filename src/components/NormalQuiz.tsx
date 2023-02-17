@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { wordProps } from "./DragQuiz";
 import wordData from "../data.json";
 import { motion } from "framer-motion";
 import {
@@ -14,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import AnswerDialog from "./AnswerDialog";
 import { BellIcon } from "@chakra-ui/icons";
+import ResultModal from "./ResultModal";
+import { resultDataProps, wordProps } from "../type";
 
 const NormalQuiz = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
@@ -21,9 +22,19 @@ const NormalQuiz = () => {
   const [isSelected, setIsSelected] = useBoolean(false);
   const [isCorrect, setIsCorrect] = useBoolean(false);
   const [optionWord, setOptionWord] = useState<wordProps[]>();
-  const [pastWord, setPastWord] = useState<wordProps[]>()
-  const { isOpen: isAnswerOpen, onOpen: onAnswerOpen, onClose: onAnswerClose } = useDisclosure();
+  const [pastWord, setPastWord] = useState<wordProps[]>();
+  const {
+    isOpen: isAnswerOpen,
+    onOpen: onAnswerOpen,
+    onClose: onAnswerClose,
+  } = useDisclosure();
+  const {
+    isOpen: isResultOpen,
+    onOpen: onResultOpen,
+    onClose: onResultClose,
+  } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const [resultData, setResultData] = useState<resultDataProps[]>();
 
   useEffect(() => {
     // console.log(selectWord);
@@ -32,6 +43,9 @@ const NormalQuiz = () => {
   useEffect(() => {
     console.log(pastWord);
   }, [pastWord]);
+  useEffect(() => {
+    console.log(resultData);
+  }, [resultData]);
 
   /**
    * 選択肢から選択
@@ -46,23 +60,28 @@ const NormalQuiz = () => {
    * 出題
    */
   const on_set_a_questions = () => {
-
     if (wordData.length === pastWord?.length) {
-      console.log('end');
-      
-      return
+      console.log("end");
+      onAnswerClose();
+      onResultOpen();
+      return;
     }
 
-    const get_rand_word = (data: wordProps[]) => data[Math.floor(Math.random() * data.length)];
-    console.log(pastWord ? wordData.filter(i => pastWord?.indexOf(i) === -1) : wordData);
-    
-    const word = get_rand_word(pastWord ? wordData.filter(i => pastWord?.indexOf(i) === -1) : wordData)
+    const get_rand_word = (data: wordProps[]) =>
+      data[Math.floor(Math.random() * data.length)];
+    console.log(
+      pastWord ? wordData.filter((i) => pastWord?.indexOf(i) === -1) : wordData
+    );
+
+    const word = get_rand_word(
+      pastWord ? wordData.filter((i) => pastWord?.indexOf(i) === -1) : wordData
+    );
     console.log(word);
-    
+
     setCurrentWord(word);
 
     // 既出単語に追加
-    setPastWord(prev => prev ? [...prev, word] : [word])
+    setPastWord((prev) => (prev ? [...prev, word] : [word]));
     const options: wordProps[] = [];
     options.push(word);
 
@@ -83,12 +102,19 @@ const NormalQuiz = () => {
    * 解答する
    */
   const on_answer = () => {
+    let correctFlag = false;
     if (selectWord?.eng === currentWord?.eng) {
+      correctFlag = true;
       setIsCorrect.on();
     } else {
       setIsCorrect.off();
     }
     onAnswerOpen();
+    setResultData((prev) =>
+      prev
+        ? [...prev, { word: currentWord, isCorrect: correctFlag }]
+        : [{ word: currentWord, isCorrect: correctFlag }]
+    );
   };
 
   /**
@@ -223,6 +249,12 @@ const NormalQuiz = () => {
           on_set_a_questions={on_set_a_questions}
           title="答え"
           isExistNext={wordData.length !== pastWord?.length}
+        />
+        <ResultModal
+          isOpen={isResultOpen}
+          onClose={onResultClose}
+          onOpen={onResultOpen}
+          resultData={resultData ?? []}
         />
       </Flex>
     </Box>

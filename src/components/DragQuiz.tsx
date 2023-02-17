@@ -3,11 +3,9 @@ import { FC, useEffect, useRef, useState } from "react";
 import wordData from "../data.json";
 import DragItem from "./DragItem";
 import { motion } from "framer-motion";
+import { wordProps } from "../type";
 
-export interface wordProps {
-  eng: string;
-  jap: string;
-}
+
 const DragQuiz: FC = () => {
   const [currentWord, setCurrentWord] = useState<wordProps>();
   const [optionWord, setOptionWord] = useState<wordProps[]>();
