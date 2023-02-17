@@ -168,12 +168,13 @@ const NormalQuiz = () => {
                 fontSize: "1.875rem",
                 background: "rgba(0,0,0,0.06)",
                 opacity: 0,
+                transition: "all 0.3s ease-out",
+                borderBlock: "solid",
+                borderColor: "#F0F0F0",
+                borderWidth: 1,
                 ...(selectWord?.eng === item.eng
                   ? {
-                      // transition:'0.5s',
-                      borderBlock: "solid",
                       borderColor: "#000",
-                      borderWidth: 1,
                     }
                   : {}),
               }}
