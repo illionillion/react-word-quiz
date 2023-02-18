@@ -74,8 +74,30 @@ const ResultModal: FC<ResultModalProps> = ({
                   <Tr key={index}>
                     <Td>{item.word?.eng}</Td>
                     <Td>{item.word?.jap}</Td>
-                    <Td color={item.isCorrect ? "red" : "blue"}>
-                      {item.isCorrect ? "正解" : "不正解"}
+                    <Td
+                      color={(() => {
+                        switch (item.isCorrect) {
+                          case true:
+                            return "red";
+                          case false:
+                            return "blue";
+
+                          default:
+                            return "black";
+                        }
+                      })()}
+                    >
+                      {(() => {
+                        switch (item.isCorrect) {
+                          case true:
+                            return "正解";
+                          case false:
+                            return "不正解";
+
+                          default:
+                            return "未解答";
+                        }
+                      })()}
                     </Td>
                   </Tr>
                 ))}

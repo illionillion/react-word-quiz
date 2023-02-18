@@ -37,7 +37,7 @@ const NormalQuiz = () => {
   const [resultData, setResultData] = useState<resultDataProps[]>();
 
   useEffect(() => {
-    // console.log(selectWord);
+    // 初回だけ実行
     wordSpeech("");
   }, []);
   useEffect(() => {
@@ -52,7 +52,6 @@ const NormalQuiz = () => {
    */
   const onSelectWord = (eng: string) => {
     setIsSelected.on();
-    // console.log(eng);
     setSelectWord(optionWord?.find((item) => item.eng === eng));
   };
 
@@ -61,7 +60,6 @@ const NormalQuiz = () => {
    */
   const on_set_a_questions = () => {
     if (wordData.length === pastWord?.length) {
-      console.log("end");
       onAnswerClose();
       onResultOpen();
       return;
@@ -69,16 +67,16 @@ const NormalQuiz = () => {
 
     const get_rand_word = (data: wordProps[]) =>
       data[Math.floor(Math.random() * data.length)];
-    console.log(
-      pastWord ? wordData.filter((i) => pastWord?.indexOf(i) === -1) : wordData
-    );
 
     const word = get_rand_word(
       pastWord ? wordData.filter((i) => pastWord?.indexOf(i) === -1) : wordData
     );
-    console.log(word);
 
     setCurrentWord(word);
+    // isCorrectなしで設定
+    setResultData((prev) =>
+      prev ? [...prev, { word: word }] : [{ word: word }]
+    );
 
     // 既出単語に追加
     setPastWord((prev) => (prev ? [...prev, word] : [word]));
@@ -110,10 +108,13 @@ const NormalQuiz = () => {
       setIsCorrect.off();
     }
     onAnswerOpen();
+    // 正誤のデータを入れる
     setResultData((prev) =>
-      prev
-        ? [...prev, { word: currentWord, isCorrect: correctFlag }]
-        : [{ word: currentWord, isCorrect: correctFlag }]
+      prev?.map((data) =>
+        data.word?.eng == currentWord?.eng && data.isCorrect === undefined
+          ? { word: currentWord, isCorrect: correctFlag }
+          : data
+      )
     );
   };
 
@@ -200,7 +201,7 @@ const NormalQuiz = () => {
           flexDirection="column"
           textAlign="center"
           justifyContent="center"
-          gap={5}
+          gap={4}
         >
           {optionWord?.map((item, index) => (
             <motion.li

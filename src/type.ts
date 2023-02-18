@@ -1,6 +1,6 @@
 export interface resultDataProps {
   word: wordProps | undefined;
-  isCorrect: boolean;
+  isCorrect?: boolean;
 }
 export interface wordProps {
   eng: string;
