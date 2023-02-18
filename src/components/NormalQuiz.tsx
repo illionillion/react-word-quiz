@@ -188,7 +188,10 @@ const NormalQuiz = () => {
         <Center borderWidth="1px" flex={1} fontSize="3xl">
           {currentWord ? (
             <>
-              <BellIcon onClick={() => wordSpeech(currentWord?.eng ?? "")} />
+              <BellIcon
+                onClick={() => wordSpeech(currentWord?.eng ?? "")}
+                cursor="pointer"
+              />
               {currentWord?.eng}
             </>
           ) : (
@@ -215,6 +218,7 @@ const NormalQuiz = () => {
                 borderBlock: "solid",
                 borderColor: "#F0F0F0",
                 borderWidth: 1,
+                cursor: "pointer",
                 ...(selectWord?.eng === item.eng
                   ? {
                       borderColor: "#000",
